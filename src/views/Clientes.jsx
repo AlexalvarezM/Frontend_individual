@@ -4,15 +4,21 @@ import TablaClientes from '../components/clientes/TablaClientes'; // Importa el 
 import CuadroBusquedas from '../components/busquedas/CuadroBusquedas';
 import { Container, Button, Row, Col } from "react-bootstrap";
 
+
 // Declaración del componente Categorias
 const Clientes = () => {
   // Estados para manejar los datos, carga y errores
   const [listaClientes, setListaClientes] = useState([]); // Almacena los datos de la API
   const [cargando, setCargando] = useState(true);            // Controla el estado de carga
-  const [errorCarga, setErrorCarga] = useState(null);        // Maneja errores de la petición
+  const [errorCarga, setErrorCarga] = useState(null); 
+
 
   const [clientesFiltrados, setClientesFiltrados] = useState([]);
   const [textoBusqueda, setTextoBusqueda] = useState("");
+
+  const [paginaActual, establecerPaginaActual] = useState(1);
+  const elementosPorPagina = 1; // Número de elementos por página
+
 
   // Lógica de obtención de datos con useEffect
   useEffect(() => {
@@ -49,6 +55,13 @@ const Clientes = () => {
   };                     // Array vacío para que solo se ejecute una vez
 
   // Renderizado de la vista
+
+  // Calcular elementos paginados
+const clientesPaginadas = clientesFiltrados.slice(
+  (paginaActual - 1) * elementosPorPagina,
+  paginaActual * elementosPorPagina
+);
+
   return (
     <>
       <Container className="mt-5">
@@ -71,9 +84,13 @@ const Clientes = () => {
 
         {/* Pasa los estados como props al componente TablaCategorias */}
         <TablaClientes
-          clientes={clientesFiltrados}
+          clientes={clientesPaginadas}
           cargando={cargando}
           error={errorCarga}
+          totalElementos={listaClientes.length} // Total de elementos
+          elementosPorPagina={elementosPorPagina} // Elementos por página
+          paginaActual={paginaActual} // Página actual
+          establecerPaginaActual={establecerPaginaActual} // Método para cambiar página
         />
       </Container>
     </>
